@@ -36,8 +36,10 @@ RUN apt-get update --yes && apt-get install --no-install-recommends --yes \
   libmagick++-dev \
   libgdal-dev \
   libtesseract-dev \
-  libleptonica-dev
-
+  libleptonica-dev \
+  tesseract-ocr-eng \
+  libglu1-mesa-dev \
+  libssh2-1-dev
 # RUN \
 #   R -e 'chooseCRANmirror(ind=1); install.packages(c("BiocManager","devtools", "Rcpp","RcppArmadillo", "Matrix", "mgcv", "abind","igraph","h5","Rtsne","cluster","data.table"), dependencies = TRUE)'
 
@@ -82,6 +84,9 @@ RUN \
 
 RUN \
   R -e 'install.packages("igraph", dependencies = TRUE)'
+
+RUN \
+  R -e 'source("https://bioconductor.org/biocLite.R"); biocLite(c("GenomicRanges"),suppressAutoUpdate=TRUE,ask=FALSE,suppressUpdates=TRUE)'
 
 RUN \
   R -e 'install.packages("data.table", dependencies = TRUE)'
