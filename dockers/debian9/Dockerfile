@@ -1,6 +1,10 @@
 FROM rocker/r-ver:3.4
 MAINTAINER Peter Kharchenko "peter_kharchenko@hms.harvard.edu"
 
+RUN apt update && apt install software-properties-common --yes
+
+#RUN add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) universe"
+
 RUN apt-get update --yes && apt-get install --no-install-recommends --yes \
   build-essential \
   cmake \
@@ -18,14 +22,78 @@ RUN apt-get update --yes && apt-get install --no-install-recommends --yes \
   curl \
   libhdf5-cpp-100 \ 
   libarmadillo7 \
-  libarmadillo-dev
+  libarmadillo-dev \
+  libfontconfig1-dev \
+  libharfbuzz-dev \
+  libfribidi-dev \
+  libfreetype6-dev \
+  libpng-dev \
+  libtiff5-dev \
+  libjpeg-dev \
+  librsvg2-dev \
+  libwebp-dev \
+  libpoppler-cpp-dev \
+  libmagick++-dev \
+  libgdal-dev \
+  libtesseract-dev \
+  libleptonica-dev
+
+# RUN \
+#   R -e 'chooseCRANmirror(ind=1); install.packages(c("BiocManager","devtools", "Rcpp","RcppArmadillo", "Matrix", "mgcv", "abind","igraph","h5","Rtsne","cluster","data.table"), dependencies = TRUE)'
 
 RUN \
-  R -e 'chooseCRANmirror(ind=52); install.packages(c("devtools", "Rcpp","RcppArmadillo", "Matrix", "mgcv", "abind","igraph","h5","Rtsne","cluster","data.table"))'
+  R -e 'install.packages("h5", dependencies = TRUE)'
+
+RUN \
+  R -e 'install.packages("Rtsne", dependencies = TRUE)'
+
+RUN \
+  R -e 'install.packages("cluster", dependencies = TRUE)'
+
+RUN \
+  R -e 'install.packages("Rcpp", dependencies = TRUE)'
+
+RUN \
+  R -e 'install.packages("RcppArmadillo", dependencies = TRUE)'
+
+RUN \
+  R -e 'install.packages("Matrix", dependencies = TRUE)'
+
+RUN \
+  R -e 'install.packages("mgcv", dependencies = TRUE)'
+
+RUN \
+  R -e 'install.packages("abind", dependencies = TRUE)'
+
+RUN \
+  R -e 'chooseCRANmirror(ind=1); install.packages("BiocVersion", dependencies = TRUE)'
+
+RUN \
+  R -e 'chooseCRANmirror(ind=1); install.packages("BiocManager", dependencies = TRUE)'
+
+RUN \
+  R -e 'source("https://bioconductor.org/biocLite.R"); biocLite(c("graph"),suppressAutoUpdate=TRUE,ask=FALSE,suppressUpdates=TRUE)'
+
+RUN \
+  R -e 'install.packages("magick", dependencies = TRUE)'
+
+RUN \
+  R -e 'install.packages("rgl", dependencies = TRUE)'
+
+RUN \
+  R -e 'install.packages("igraph", dependencies = TRUE)'
+
+RUN \
+  R -e 'install.packages("data.table", dependencies = TRUE)'
+
+RUN \
+  R -e 'install.packages("devtools", dependencies = TRUE)'
+
+RUN \
+  R -e 'install.packages("locfit", dependencies = TRUE)'
 
 RUN \
   R -e 'source("https://bioconductor.org/biocLite.R"); biocLite(c("pcaMethods","edgeR","Rsamtools","GenomicAlignments","GenomeInfoDb","Biostrings"),suppressAutoUpdate=TRUE,ask=FALSE,suppressUpdates=TRUE)'
-
 
 RUN useradd -m user
 USER user
@@ -38,8 +106,8 @@ RUN \
 
 RUN \
   echo '.libPaths(c("~/R/x86_64-redhat-linux-gnu-library/3.4", .libPaths()))' > .Rprofile && \
+  R -e 'library(devtools)' && \
   R -e 'devtools::install_local("~/velocyto.R/",dep=T,upgrade_dependencies=F)'
-
 
 ENV  LD_LIBRARY_PATH=/usr/local/lib/R/lib/:$LD_LIBRARY_PATH \
   R_PROFILE=~/.Rprofile
