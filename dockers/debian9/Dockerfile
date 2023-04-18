@@ -3,8 +3,6 @@ MAINTAINER Peter Kharchenko "peter_kharchenko@hms.harvard.edu"
 
 RUN apt update && apt install software-properties-common --yes
 
-#RUN add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) universe"
-
 RUN apt-get update --yes && apt-get install --no-install-recommends --yes \
   build-essential \
   cmake \
@@ -39,9 +37,8 @@ RUN apt-get update --yes && apt-get install --no-install-recommends --yes \
   libleptonica-dev \
   tesseract-ocr-eng \
   libglu1-mesa-dev \
-  libssh2-1-dev
-# RUN \
-#   R -e 'chooseCRANmirror(ind=1); install.packages(c("BiocManager","devtools", "Rcpp","RcppArmadillo", "Matrix", "mgcv", "abind","igraph","h5","Rtsne","cluster","data.table"), dependencies = TRUE)'
+  libssh2-1-dev \
+  wget
 
 RUN \
   R -e 'install.packages("h5", dependencies = TRUE)'
@@ -101,9 +98,19 @@ RUN \
   R -e 'source("https://bioconductor.org/biocLite.R"); biocLite(c("pcaMethods","edgeR","Rsamtools","GenomicAlignments","GenomeInfoDb","Biostrings"),suppressAutoUpdate=TRUE,ask=FALSE,suppressUpdates=TRUE)'
 
 RUN useradd -m user
+
 USER user
 ENTRYPOINT ["/bin/bash"]
+RUN mkdir "/home/user/data"
 WORKDIR "/home/user"
+COPY requirements.txt .
+
+#RUN pip3 install velocyto
+
+# RUN pip3 install --upgrade setuptools
+
+# RUN pip3 install --no-cache-dir --upgrade pip \
+#   && pip3 install --no-cache-dir -r requirements.txt
 
 RUN \
   git clone https://github.com/velocyto-team/velocyto.R && \
