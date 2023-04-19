@@ -38,7 +38,8 @@ RUN apt-get update --yes && apt-get install --no-install-recommends --yes \
   tesseract-ocr-eng \
   libglu1-mesa-dev \
   libssh2-1-dev \
-  wget
+  wget \
+  vim
 
 RUN \
   R -e 'install.packages("h5", dependencies = TRUE)'
@@ -128,5 +129,5 @@ RUN \
 
 ENV  LD_LIBRARY_PATH=/usr/local/lib/R/lib/:$LD_LIBRARY_PATH \
   R_PROFILE=~/.Rprofile
-  
+
 ENV PATH="/home/user/.local/bin:${PATH}"
