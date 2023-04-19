@@ -38,6 +38,17 @@ RUN apt-get update --yes && apt-get install --no-install-recommends --yes \
   tesseract-ocr-eng \
   libglu1-mesa-dev \
   libssh2-1-dev \
+  libreadline-gplv2-dev \
+  libncursesw5-dev \
+  libsqlite3-dev \
+  tk-dev \
+  libgdbm-dev \
+  libc6-dev \
+  libbz2-dev \
+  libffi-dev \
+  zlib1g-dev \
+  openssl \
+  liblzma-dev \
   wget \
   vim
 
