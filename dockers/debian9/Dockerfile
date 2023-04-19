@@ -97,20 +97,25 @@ RUN \
 RUN \
   R -e 'source("https://bioconductor.org/biocLite.R"); biocLite(c("pcaMethods","edgeR","Rsamtools","GenomicAlignments","GenomeInfoDb","Biostrings"),suppressAutoUpdate=TRUE,ask=FALSE,suppressUpdates=TRUE)'
 
-RUN useradd -m user
 
+RUN wget https://www.python.org/ftp/python/3.9.5/Python-3.9.5.tgz 
+RUN tar xzf Python-3.9.5.tgz 
+WORKDIR "/Python-3.9.5"
+RUN ./configure --enable-optimizations
+RUN make altinstall
+
+RUN python3.9 -m pip install --upgrade pip setuptools wheel
+
+RUN useradd -m user
 USER user
 ENTRYPOINT ["/bin/bash"]
 RUN mkdir "/home/user/data"
 WORKDIR "/home/user"
-COPY requirements.txt .
 
-#RUN pip3 install velocyto
-
-# RUN pip3 install --upgrade setuptools
-
-# RUN pip3 install --no-cache-dir --upgrade pip \
-#   && pip3 install --no-cache-dir -r requirements.txt
+COPY --chown=user:user requirements.txt .
+RUN pip3.9 install --user numpy
+RUN pip3.9 install --user Cython
+RUN pip3.9 install --user velocyto
 
 RUN \
   git clone https://github.com/velocyto-team/velocyto.R && \
@@ -123,3 +128,5 @@ RUN \
 
 ENV  LD_LIBRARY_PATH=/usr/local/lib/R/lib/:$LD_LIBRARY_PATH \
   R_PROFILE=~/.Rprofile
+  
+ENV PATH="/home/user/.local/bin:${PATH}"
