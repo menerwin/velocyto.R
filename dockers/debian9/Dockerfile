@@ -124,21 +124,22 @@ ENTRYPOINT ["/bin/bash"]
 RUN mkdir "/home/user/data"
 WORKDIR "/home/user"
 
-COPY --chown=user:user requirements.txt .
-RUN pip3.9 install --user numpy
-RUN pip3.9 install --user Cython
-RUN pip3.9 install --user velocyto
+ENV PATH="/home/user/.local/bin:${PATH}"
+
+RUN pip3.9 install numpy
+RUN pip3.9 install Cython
+RUN pip3.9 install velocyto
 
 RUN \
   git clone https://github.com/velocyto-team/velocyto.R && \
   mkdir -p ~/R/x86_64-redhat-linux-gnu-library/3.4
+
+RUN ls -lsah
 
 RUN \
   echo '.libPaths(c("~/R/x86_64-redhat-linux-gnu-library/3.4", .libPaths()))' > .Rprofile && \
   R -e 'library(devtools)' && \
   R -e 'devtools::install_local("~/velocyto.R/",dep=T,upgrade_dependencies=F)'
 
-ENV  LD_LIBRARY_PATH=/usr/local/lib/R/lib/:$LD_LIBRARY_PATH \
+ENV LD_LIBRARY_PATH=/usr/local/lib/R/lib/:$LD_LIBRARY_PATH \
   R_PROFILE=~/.Rprofile
-
-ENV PATH="/home/user/.local/bin:${PATH}"

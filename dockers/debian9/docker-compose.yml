@@ -3,7 +3,5 @@ services:
     build: .
     stdin_open: true
     tty: true
-    ports:
-      - 3939:3939
     volumes:
-      - /home/erwin/Docker_P/R_Container_Mounts/velocyto:/home/user/data
+      - /home/erwin/Docker_Projects/Container_Bind_Mounts/velocyto:/home/user/data
